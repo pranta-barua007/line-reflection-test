@@ -33,7 +33,7 @@ function ProductTable({ productItems }) {
               })
             }        
             options={{
-                selection: true,
+                selection: false,
                 pageSize: 20,
                 padding: 'dense',
             }}
