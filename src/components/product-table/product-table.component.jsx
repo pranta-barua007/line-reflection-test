@@ -37,16 +37,16 @@ function ProductTable({ productItems }) {
                 pageSize: 20,
                 padding: 'dense',
             }}
-            actions={[
-            {
-                tooltip: 'Remove All Selected Users',
-                icon: tableIcons.Delete,
-                onClick: (evt, data) => {
-                  alert('You want to delete ' + data.length + ' rows');
-                  console.log(data)
-                }
-            }
-            ]}
+            // actions={[
+            // {
+            //     tooltip: 'Remove All Selected Users',
+            //     icon: tableIcons.Delete,
+            //     onClick: (evt, data) => {
+            //       alert('You want to delete ' + data.length + ' rows');
+            //       console.log(data)
+            //     }
+            // }
+            // ]}
         />
       </Container>
     )
