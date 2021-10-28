@@ -1,11 +1,14 @@
 import React from 'react';
 import MaterialTable from '@material-table/core';
 import { Container } from '@material-ui/core';
-import data from '../../data/product-data.json';
+
+import { connect } from 'react-redux';
+import { createStructuredSelector } from 'reselect';
+import { selectProductItems } from '../../redux/product/product.selectors';
 
 import { tableIcons } from '../../utils/material-table/material-table.config';
 
-function ProductTable() {
+function ProductTable({ productItems }) {
     return (
       <Container>  
         <MaterialTable
@@ -25,8 +28,8 @@ function ProductTable() {
             { title: 'Minimum rent period', field: 'minimum_rent_period' },
             ]}
             data={ 
-                data?.map((data) => {
-                return {...data}
+              productItems?.map((dataObj) => {
+                return {...dataObj}
               })
             }        
             options={{
@@ -38,7 +41,10 @@ function ProductTable() {
             {
                 tooltip: 'Remove All Selected Users',
                 icon: tableIcons.Delete,
-                onClick: (evt, data) => alert('You want to delete ' + data.length + ' rows')
+                onClick: (evt, data) => {
+                  alert('You want to delete ' + data.length + ' rows');
+                  console.log(data)
+                }
             }
             ]}
         />
@@ -46,6 +52,11 @@ function ProductTable() {
     )
 };
 
+const mapStateToProps = createStructuredSelector(
+  {
+    productItems: selectProductItems
+  }
+);
 
-export default ProductTable;
+export default connect(mapStateToProps, null)(ProductTable);
   
