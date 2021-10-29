@@ -1,6 +1,5 @@
 import React from 'react';
 import MaterialTable from '@material-table/core';
-import { Container } from '@material-ui/core';
 
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
@@ -10,7 +9,6 @@ import { tableIcons } from '../../utils/material-table/material-table.config';
 
 function ProductTable({ productItems }) {
     return (
-      <Container>  
         <MaterialTable
             style={{borderRadius: '10px', boxShadow: '0 0 28px rgb(0 0 0 / 8%)'}}
             title="Product Table"
@@ -48,7 +46,6 @@ function ProductTable({ productItems }) {
             // }
             // ]}
         />
-      </Container>
     )
 };
 

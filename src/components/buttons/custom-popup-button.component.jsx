@@ -1,9 +1,6 @@
 import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
-import AddCircleOutlineIconon from '@material-ui/icons/AddCircleOutline';
 import{ Modal, Backdrop, Fade, Button }from '@material-ui/core';
-
-import BookingModal from '../../modals/booking-modal/booking-modal.component';
 
 const useStyles = makeStyles((theme) => ({
   modal: {
@@ -20,7 +17,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export const BookingButton = () => {
+export const CustomPopUpButton = ({ PopUpModal, CustomIcon, buttonName }) => {
   const classes = useStyles();
   const [open, setOpen] = React.useState(false);
 
@@ -38,9 +35,9 @@ export const BookingButton = () => {
         onClick={handleOpen}
         variant="contained"
         color="primary"
-        startIcon={<AddCircleOutlineIconon/>}
+        startIcon={<CustomIcon/>}
       >
-        Book Item
+        {buttonName}
       </Button>
       <Modal
         aria-labelledby="transition-modal-title"
@@ -56,8 +53,8 @@ export const BookingButton = () => {
       >
         <Fade in={open}>
           <div className={classes.paper}>
-            <h2 id="transition-modal-title">Book a product</h2>
-            <BookingModal />
+            <h2 id="transition-modal-title">{buttonName}</h2>
+            <PopUpModal />
           </div>
         </Fade>
       </Modal>
@@ -65,4 +62,4 @@ export const BookingButton = () => {
   );
 };
 
-export default BookingButton;
+export default CustomPopUpButton;
