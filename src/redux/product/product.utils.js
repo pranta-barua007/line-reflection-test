@@ -7,5 +7,5 @@ export const calculateRentalFee = (productList, item) => {
         rentalFee = Number(productExist.price) * rentPeriod;
     }
 
-    return {...productExist, rentalFee: rentalFee};
+    return {...productExist, rentalFee, rentPeriod};
 }

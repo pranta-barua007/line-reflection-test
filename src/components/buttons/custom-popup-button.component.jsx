@@ -54,7 +54,7 @@ export const CustomPopUpButton = ({ PopUpModal, CustomIcon, buttonName }) => {
         <Fade in={open}>
           <div className={classes.paper}>
             <h2 id="transition-modal-title">{buttonName}</h2>
-            <PopUpModal />
+            <PopUpModal isModelOpen={open}/>
           </div>
         </Fade>
       </Modal>

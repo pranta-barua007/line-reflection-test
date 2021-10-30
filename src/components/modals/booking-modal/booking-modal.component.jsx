@@ -31,7 +31,7 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
-function BookingModal({ productItems, productBooking, addItem }) {
+function BookingModal({ productItems, productBooking, addItem, isModelOpen }) {
   const classes = useStyles();
   const [category, setcategory] = useState('');
   const [updateToday, setUpdateToday] = useState('');
@@ -40,20 +40,26 @@ function BookingModal({ productItems, productBooking, addItem }) {
 
   const today = new Date().toISOString().split("T")[0];
   let tomorrow = new Date(today);
-  tomorrow.setDate(tomorrow.getDate() + 1 || productBooking?.minimum_rent_period);
+  tomorrow.setDate(tomorrow.getDate() + 1);
   tomorrow = tomorrow.toISOString().split("T")[0];
+
+  React.useEffect(() => {
+    setUpdateToday(today);
+    setUpdateTomorrow(tomorrow);
+  },[]);
 
   const handleChange = (event) => {
     setcategory(event.target.value);
   };
 
+  const calcRentPeriod = (todayForCalc, tomorrowForCalc) => {
+    const diffInTime = new Date(tomorrowForCalc).getTime() - new Date(todayForCalc).getTime();
+    const diffInDays = diffInTime / (1000 * 3600 * 24);
+    return diffInDays;
+  }
+
   const handleSubmit = (e) => {
     e.preventDefault();
-
-    const diffInTime = new Date(updateTomorrow ? updateTomorrow : tomorrow).getTime() - new Date(updateToday ? updateToday : today).getTime();
-    const diffInDays = diffInTime / (1000 * 3600 * 24);
-    addItem({ productCode: productCode, 
-      rentPeriod: diffInDays});
   }
 
   return (
@@ -64,6 +70,8 @@ function BookingModal({ productItems, productBooking, addItem }) {
           onChange={(e) => {
             handleChange(e);
             setProductCode(e.target.value);
+            const rentPeriod = calcRentPeriod(updateToday, updateTomorrow);
+            addItem({ productCode: e.target.value, rentPeriod});
           }}
           displayEmpty
           className={classes.selectEmpty}
@@ -89,15 +97,25 @@ function BookingModal({ productItems, productBooking, addItem }) {
         <FormHelperText className={classes.formTextHelper}>Select your desired category</FormHelperText>
         <div className={classes.dateArea}>
           <input type="date" id="launch-day" name="launch-day" min={today} max="2040-12-31" defaultValue={today} 
-            onChange={(event) => setUpdateToday(event.target.value)}
+            onChange={(event) => {
+              setUpdateToday(event.target.value);
+              const rentPeriod = calcRentPeriod(event.target.value, updateTomorrow);
+              addItem({ productCode, rentPeriod});
+            }}
           />
           <span>to</span>
           <input type="date" id="launch-day" name="launch-day" min={tomorrow} max="2040-12-31" defaultValue={tomorrow} 
-            onChange={(event) => setUpdateTomorrow(event.target.value)}
+            onChange={(event) => {
+              setUpdateTomorrow(event.target.value);
+              const rentPeriod = calcRentPeriod(updateToday, event.target.value);
+              addItem({ productCode, rentPeriod});
+            }}
           />
         </div>
         <div>
-         {productBooking && `Product's price is $${productBooking?.rentalFee}`}
+          {
+            productBooking?.code === productCode && `Product's price is $${productBooking?.rentalFee}`
+          }
         </div>
         <Button type='submit' variant="contained" color="primary">Submit</Button>
       </FormControl>
