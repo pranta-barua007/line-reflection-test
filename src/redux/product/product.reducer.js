@@ -1,10 +1,11 @@
 import { productActionTypes } from './product.types';
 import productJsonData from '../../data/product-data.json';
-import { calculateRentalFee } from './product.utils';
+import { calculateCredentialOfCart, removeItemFromBooking } from './product.utils';
 
 const INITIAL_STATE = {
     items : productJsonData,
-    booking: null,
+    cart: null,
+    bookings: []
 }
 
 const productReducer = (state=INITIAL_STATE, action) => {
@@ -12,7 +13,17 @@ const productReducer = (state=INITIAL_STATE, action) => {
         case productActionTypes.ADD_ITEM_FOR_BOOKING:
             return {
                 ...state,
-                booking: calculateRentalFee(state.items, action.payload)
+                cart: calculateCredentialOfCart(state.items, action.payload)
+            }
+        case productActionTypes.CONFIRM_ITEM_FOR_BOOKING:
+            return {
+                ...state,
+                bookings: [...state.bookings, action.payload]
+            }
+        case productActionTypes.REMOVE_ITEM_FROM_BOOKING:
+            return {
+                ...state,
+                bookings: removeItemFromBooking(state.bookings, action.payload)
             }
         default:
             return state;

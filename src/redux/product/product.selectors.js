@@ -7,7 +7,12 @@ export const selectProductItems = createSelector(
     (product) => product.items
 );
 
-export const selectProductBooking = createSelector(
+export const selectProductCart = createSelector(
     [selectProduct],
-    (product) => product.booking
+    (product) => product.cart
+);
+
+export const selectProductBookings = createSelector(
+    [selectProduct],
+    (product) => product.bookings
 );

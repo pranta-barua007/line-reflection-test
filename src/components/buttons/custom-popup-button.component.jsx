@@ -17,7 +17,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export const CustomPopUpButton = ({ PopUpModal, CustomIcon, buttonName }) => {
+export const CustomPopUpButton = ({ PopUpModal, CustomIcon, buttonName, ...otherProps }) => {
   const classes = useStyles();
   const [open, setOpen] = React.useState(false);
 
@@ -36,6 +36,7 @@ export const CustomPopUpButton = ({ PopUpModal, CustomIcon, buttonName }) => {
         variant="contained"
         color="primary"
         startIcon={<CustomIcon/>}
+        {...otherProps}
       >
         {buttonName}
       </Button>

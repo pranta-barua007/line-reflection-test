@@ -3,9 +3,9 @@ import { makeStyles } from '@material-ui/core/styles';
 import {MenuItem, FormHelperText, FormControl, Select, Button } from '@material-ui/core';
 
 import { connect } from 'react-redux';
-import { addItemForBooking } from '../../../redux/product/product.actions';
+import { addItemForBooking, confirmItemForBooking } from '../../../redux/product/product.actions';
 import { createStructuredSelector } from 'reselect';
-import { selectProductItems, selectProductBooking } from '../../../redux/product/product.selectors';
+import { selectProductItems, selectProductCart } from '../../../redux/product/product.selectors';
 
 const useStyles = makeStyles((theme) => ({
   formControl: {
@@ -31,7 +31,7 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
-function BookingModal({ productItems, productBooking, addItem, isModelOpen }) {
+function BookingModal({ productItems, productCart, addItem, submitItem, isModelOpen }) {
   const classes = useStyles();
   const [category, setcategory] = useState('');
   const [updateToday, setUpdateToday] = useState('');
@@ -60,6 +60,12 @@ function BookingModal({ productItems, productBooking, addItem, isModelOpen }) {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    if(productCart && productCart.minimum_rent_period < calcRentPeriod(updateToday, updateTomorrow)) {
+      submitItem(productCart);
+      return true;
+    }else {
+      return false;
+    }
   }
 
   return (
@@ -71,7 +77,10 @@ function BookingModal({ productItems, productBooking, addItem, isModelOpen }) {
             handleChange(e);
             setProductCode(e.target.value);
             const rentPeriod = calcRentPeriod(updateToday, updateTomorrow);
-            addItem({ productCode: e.target.value, rentPeriod});
+            addItem({ productCode: e.target.value,
+               rentPeriod, 
+               rent_start_date: updateToday, 
+               rent_expiry_date: updateTomorrow});
           }}
           displayEmpty
           className={classes.selectEmpty}
@@ -100,7 +109,10 @@ function BookingModal({ productItems, productBooking, addItem, isModelOpen }) {
             onChange={(event) => {
               setUpdateToday(event.target.value);
               const rentPeriod = calcRentPeriod(event.target.value, updateTomorrow);
-              addItem({ productCode, rentPeriod});
+              addItem({ productCode, 
+                rentPeriod, 
+                rent_start_date: updateToday, 
+                rent_expiry_date: updateTomorrow});
             }}
           />
           <span>to</span>
@@ -108,16 +120,44 @@ function BookingModal({ productItems, productBooking, addItem, isModelOpen }) {
             onChange={(event) => {
               setUpdateTomorrow(event.target.value);
               const rentPeriod = calcRentPeriod(updateToday, event.target.value);
-              addItem({ productCode, rentPeriod});
+              addItem({ productCode, 
+                rentPeriod, 
+                rent_start_date: updateToday, 
+                rent_expiry_date: updateTomorrow});
             }}
           />
         </div>
         <div>
           {
-            productBooking?.code === productCode && `Product's price is $${productBooking?.rentalFee}`
+            productCart && productCart?.code === productCode && `Product's price is $${productCart?.rentalFee}`
           }
         </div>
-        <Button type='submit' variant="contained" color="primary">Submit</Button>
+        <div>
+          {
+            productCart && productCart.minimum_rent_period < calcRentPeriod(updateToday, updateTomorrow) && `Product is ready fo Rent`
+          }
+        </div>
+        <Button 
+          type='submit' 
+          variant={
+            productCart && productCart.minimum_rent_period < calcRentPeriod(updateToday, updateTomorrow)
+            ? "contained" 
+            : "outlined"
+          }
+          color={
+            productCart && productCart.minimum_rent_period < calcRentPeriod(updateToday, updateTomorrow)
+            ? "primary" 
+            : "secondary"
+          }
+          >
+            <b>
+              {
+                productCart && productCart.minimum_rent_period < calcRentPeriod(updateToday, updateTomorrow) 
+                  ? 'Submit' 
+                  : 'Please Extend your rent period!'
+              }
+            </b>
+          </Button>
       </FormControl>
     </form>
   );
@@ -126,13 +166,14 @@ function BookingModal({ productItems, productBooking, addItem, isModelOpen }) {
 const mapStateToProps = createStructuredSelector(
   {
     productItems: selectProductItems,
-    productBooking: selectProductBooking
+    productCart: selectProductCart
   }
 );
 
 const mapDispatchToProps = dispatch => (
   {
-    addItem: (item) => dispatch(addItemForBooking(item))
+    addItem: (item) => dispatch(addItemForBooking(item)),
+    submitItem: (item) => dispatch(confirmItemForBooking(item))
   }
 );
 
